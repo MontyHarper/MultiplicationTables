@@ -126,7 +126,7 @@ class QAndAService: ObservableObject {
     
     @Published var questions = [Question]()
     @Published var answers = [Answer]()
-    var tables = Set([2])
+    @Published var tables = Set([2])
     
     private let maxY = 12 // Invariant
     

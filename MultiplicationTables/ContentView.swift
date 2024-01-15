@@ -30,70 +30,107 @@ struct ContentView: View {
         .speed(0.009)
         .repeatForever()
     }
+    
+    private var tablesFormatted: String {
+        let names = Array(qanda.tables).sorted(by: {$1 < $0}).map({String($0)+"\'s "})
+        var response = names.count > 1 ? "tables" : "table"
+        
+        for index in 0..<names.count {
+            if index == 0 && names.count > 1 {
+                response = "and " + names[index] + response
+            } else if names.count > 1 {
+                response = names[index] + (index == 1 ? ", " : " ") + response
+            } else {
+                response = names[index] + response
+            }
+        }
+        return response
+    }
+    
     var body: some View {
         
         // MARK: - Pregame setup screen
         
         if gameState == .preGame {
             
-            Form {
+            // Note: I don't know why, but a ForEach inside an HStack inside a Form does not seem to work. If I arrange my buttons that way they all fire at once, any time you press a button. So I can't use form here; that's why it's a VStack.
+ 
+            ScrollView {
                 
-                Text("Multiplication Practice")
-                    .dynamicTypeSize(.xxxLarge)
-                    .frame(maxWidth:.infinity)
-                
-                
-                Section {
-                    Text("Tap a times table to add it to the game...")
-                        .dynamicTypeSize(.xxLarge)
-                    VStack {
-                        //                        HStack(spacing: 0) {
-                        //                            ForEach(0..<7) {number in
-                        //                                NumberButton(number: number, tables: $qanda.tables)
-                        //                                }
-                        //                            }
-                        //
-                        //                        HStack(spacing: 0) {
-                        //                            ForEach(7..<13) {number in
-                        //                                NumberButton(number: number, tables: $qanda.tables)
-                        //                            }
-                        //                        }
-                        HStack {
-                            ForEach(0..<6) {number in
-                                Button(String(number)) { [number] in
-                                    self.buttonTapped(number)
+                VStack {
+                    
+                    Spacer()
+                    
+                    Text("Multiplication Practice")
+                        .dynamicTypeSize(.xxxLarge)
+                        .fontWeight(.black)
+                    
+                    
+                    Group {
+                        
+                        Text("Tap a times table to add it to the game...")
+                            .dynamicTypeSize(.xxLarge)
+                        VStack {
+                            HStack(spacing: 0) {
+                                ForEach(0..<7) {number in
+                                    NumberButton(number: number, tables: $qanda.tables, showBG: qanda.tables.contains(number))
                                 }
                             }
+                            
+                            HStack(spacing: 0) {
+                                ForEach(7..<13) {number in
+                                    NumberButton(number: number, tables: $qanda.tables, showBG: qanda.tables.contains(number))
+                                }
+                            }
+                            
                         }
                     }
-                }
-                
-                Section {
                     
-                    Text("How many questions do you want?")
-                        .dynamicTypeSize(.xxLarge)
                     
-                    Picker("I can answer this many questions...", selection:$numberOfQuestions) {
-                        ForEach([5,10,20], id: \.self) {
-                            Text($0, format: .number)
+                    Group {
+                        Text("How many questions do you want?")
+                            .dynamicTypeSize(.xxLarge)
+                        
+                        Picker("How many questions do you want?", selection:$numberOfQuestions) {
+                            ForEach([5,10,20], id: \.self) {
+                                Text($0, format: .number)
+                            }
                         }
+                        .pickerStyle(.segmented)
                     }
-                    .pickerStyle(.segmented)
-                }
-                
-                Section {
-                    Text("Your time to beat is...")
-                    Text("\(timeToBeat().oneDecimalString()) SECONDS")
-                        .frame(maxWidth: .infinity)
-                }
-                
-                
-                Button("Let's Go!") {
-                    startGame()
-                }
-                .modifier(BigButton())
-                
-            } // End of form
+                    
+                    Spacer()
+                    
+                    
+                    VStack {
+                        
+                        Text("Ready?")
+                            .dynamicTypeSize(.xxLarge)
+                            .fontWeight(.black)
+                            .padding(10)
+                        
+                        
+                        Text("For \(numberOfQuestions) questions from the \(tablesFormatted)...")
+                            .fontWeight(.bold)
+                            .multilineTextAlignment(.center)
+                        
+                        Text("Can you beat \(timeToBeat().oneDecimalString()) seconds?")
+                            .dynamicTypeSize(.xxxLarge)
+                            .fontWeight(.black)
+                            .multilineTextAlignment(.center)
+                        
+                        Button("Let's Go!") {
+                            startGame()
+                        }
+                        .modifier(BigButton())
+                    }
+                    .padding(20)
+                    
+                    Spacer()
+                    
+                } // End of VStack
+            } // End of ScrollView
+        
             
             // MARK: - Game On screen
             
@@ -136,7 +173,7 @@ struct ContentView: View {
                 if newRecordTime {
                     GeometryReader { geo in
                         
-                        let base = min(geo.size.width * 0.75, geo.size.height * 0.5)
+                        let base = min(geo.size.width * 0.75, geo.size.height * 0.75)
                         let height = base * sqrt(3)/2
                         
                         ZStack {
@@ -155,13 +192,14 @@ struct ContentView: View {
                                     rotate += 360
                                 }
                             }
-                            
+                        }
+                        .frame(width: base, height: height)
+                        .position(x: geo.size.width * 0.5, y: geo.size.height * 0.5)
+                        .overlay {
                             Text("New Fastest Time!\n\(time.oneDecimalString())")
                                 .font(.system(size: 24, weight: .black))
                                 .multilineTextAlignment(.center)
                         }
-                        .frame(width: base, height: height)
-                        .position(x: geo.size.width * 0.5, y: geo.size.height * 0.5)
                         
                     }
                 }
@@ -237,7 +275,7 @@ struct ContentView: View {
         if questionNumber > numberOfQuestions {
             gameState = .gameOver
             time = Date().timeIntervalSince1970 - startTime
-            if time < timeToBeat() {
+            if time < timeToBeat() && score == numberOfQuestions {
                 UserDefaults.standard.set(time, forKey: gameKey)
                 newRecordTime = true
             } else {
@@ -258,17 +296,17 @@ struct ContentView: View {
         
         var number: Int
         @Binding var tables: Set<Int>
+        var showBG: Bool
         
         var body: some View {
             
             Button("x" + String(number)){
-                if tables.contains(number) {
+                if tables.contains(number) && tables.count > 1 {
                     tables.remove(number)
                 } else {
                     tables.insert(number)
                 }
-                print("tables: ", tables)
-                print("button pressed, number: ", number)
+
             }
             .padding(10)
             .frame(maxWidth: .infinity)
@@ -276,7 +314,7 @@ struct ContentView: View {
             .foregroundColor(Palette.shared.colors[number % 11])
             .background(Palette.shared.complimentary[number % 11])
             .clipShape(Circle())
-            .background(Palette.shared.colors[number % 11].opacity(tables.contains(number) ? 1.0 : 0.0))
+            .background(Palette.shared.colors[number % 11].opacity(showBG ? 1.0 : 0.0))
         }
     }
     
@@ -294,6 +332,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(gameState: .preGame, newRecordTime: true)
+        ContentView(gameState: .gameOver, newRecordTime: true)
     }
 }
