@@ -12,6 +12,7 @@
 		F115B72E2A82E04700A632DF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F115B72D2A82E04700A632DF /* Assets.xcassets */; };
 		F115B7312A82E04700A632DF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F115B7302A82E04700A632DF /* Preview Assets.xcassets */; };
 		F115B7382A82E1A200A632DF /* Questions and Answers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F115B7372A82E1A200A632DF /* Questions and Answers.swift */; };
+		F1D73D1F2B536E30003478ED /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D73D1E2B536E30003478ED /* Helpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		F115B72D2A82E04700A632DF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F115B7302A82E04700A632DF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F115B7372A82E1A200A632DF /* Questions and Answers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Questions and Answers.swift"; sourceTree = "<group>"; };
+		F1D73D1E2B536E30003478ED /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 				F115B7292A82E04400A632DF /* MultiplicationTablesApp.swift */,
 				F115B72B2A82E04400A632DF /* ContentView.swift */,
 				F115B7372A82E1A200A632DF /* Questions and Answers.swift */,
+				F1D73D1E2B536E30003478ED /* Helpers.swift */,
 				F115B72D2A82E04700A632DF /* Assets.xcassets */,
 				F115B72F2A82E04700A632DF /* Preview Content */,
 			);
@@ -142,6 +145,7 @@
 			files = (
 				F115B72C2A82E04400A632DF /* ContentView.swift in Sources */,
 				F115B7382A82E1A200A632DF /* Questions and Answers.swift in Sources */,
+				F1D73D1F2B536E30003478ED /* Helpers.swift in Sources */,
 				F115B72A2A82E04400A632DF /* MultiplicationTablesApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
