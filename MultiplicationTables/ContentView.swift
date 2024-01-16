@@ -39,7 +39,7 @@ struct ContentView: View {
             if index == 0 && names.count > 1 {
                 response = "and " + names[index] + response
             } else if names.count > 1 {
-                response = names[index] + (index == 1 ? ", " : " ") + response
+                response = names[index] + (index >= 1 ? ", " : " ") + response
             } else {
                 response = names[index] + response
             }
@@ -54,83 +54,92 @@ struct ContentView: View {
         if gameState == .preGame {
             
             // Note: I don't know why, but a ForEach inside an HStack inside a Form does not seem to work. If I arrange my buttons that way they all fire at once, any time you press a button. So I can't use form here; that's why it's a VStack.
- 
-            ScrollView {
+            
+            GeometryReader { geo in
                 
-                VStack {
-                    
-                    Spacer()
-                    
-                    Text("Multiplication Practice")
-                        .dynamicTypeSize(.xxxLarge)
-                        .fontWeight(.black)
-                    
-                    
-                    Group {
-                        
-                        Text("Tap a times table to add it to the game...")
-                            .dynamicTypeSize(.xxLarge)
-                        VStack {
-                            HStack(spacing: 0) {
-                                ForEach(0..<7) {number in
-                                    NumberButton(number: number, tables: $qanda.tables, showBG: qanda.tables.contains(number))
-                                }
-                            }
-                            
-                            HStack(spacing: 0) {
-                                ForEach(7..<13) {number in
-                                    NumberButton(number: number, tables: $qanda.tables, showBG: qanda.tables.contains(number))
-                                }
-                            }
-                            
-                        }
-                    }
-                    
-                    
-                    Group {
-                        Text("How many questions do you want?")
-                            .dynamicTypeSize(.xxLarge)
-                        
-                        Picker("How many questions do you want?", selection:$numberOfQuestions) {
-                            ForEach([5,10,20], id: \.self) {
-                                Text($0, format: .number)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                    }
-                    
-                    Spacer()
-                    
+                ScrollView {
                     
                     VStack {
                         
-                        Text("Ready?")
-                            .dynamicTypeSize(.xxLarge)
-                            .fontWeight(.black)
-                            .padding(10)
+                        Spacer()
                         
-                        
-                        Text("For \(numberOfQuestions) questions from the \(tablesFormatted)...")
-                            .fontWeight(.bold)
-                            .multilineTextAlignment(.center)
-                        
-                        Text("Can you beat \(timeToBeat().oneDecimalString()) seconds?")
+                        Text("Multiplication Practice")
                             .dynamicTypeSize(.xxxLarge)
                             .fontWeight(.black)
-                            .multilineTextAlignment(.center)
                         
-                        Button("Let's Go!") {
-                            startGame()
+                        Spacer()
+                        
+                        Group {
+                            
+                            Text("Tap a times table to add it to the game...")
+                                .dynamicTypeSize(.xxLarge)
+                                .fontWeight(.bold)
+                            VStack {
+                                HStack(spacing: 0) {
+                                    ForEach(0..<7) {number in
+                                        NumberButton(number: number, tables: $qanda.tables, showBG: qanda.tables.contains(number))
+                                    }
+                                }
+                                
+                                HStack(spacing: 0) {
+                                    ForEach(7..<13) {number in
+                                        NumberButton(number: number, tables: $qanda.tables, showBG: qanda.tables.contains(number))
+                                    }
+                                }
+                                
+                            }
                         }
-                        .modifier(BigButton())
-                    }
-                    .padding(20)
-                    
-                    Spacer()
-                    
-                } // End of VStack
-            } // End of ScrollView
-        
+                        
+                        Spacer()
+                        
+                        Group {
+                            Text("How many questions do you want?")
+                                .dynamicTypeSize(.xxLarge)
+                                .fontWeight(.bold)
+                            
+                            Picker("How many questions do you want?", selection:$numberOfQuestions) {
+                                ForEach([5,10,20], id: \.self) {
+                                    Text($0, format: .number)
+                                }
+                            }
+                            .pickerStyle(.segmented)
+                        }
+                        
+                        Spacer()
+                        
+                        
+                        VStack {
+                            
+                            Text("Ready?")
+                                .dynamicTypeSize(.xxLarge)
+                                .fontWeight(.black)
+                                .padding(10)
+                            
+                            Text("For \(numberOfQuestions) questions from the \(tablesFormatted)...")
+                                .fontWeight(.bold)
+                                .multilineTextAlignment(.center)
+                            
+                            Text("Can you beat \(timeToBeat().oneDecimalString()) seconds?")
+                                .dynamicTypeSize(.xxxLarge)
+                                .fontWeight(.black)
+                                .multilineTextAlignment(.center)
+                            
+                            Button("Let's Go!") {
+                                startGame()
+                            }
+                            .modifier(BigButton())
+                        }
+                        .padding(20)
+                        
+                        Spacer()
+                        
+                    } // End of VStack
+                    .frame(minHeight: geo.size.height)
+
+                } // End of ScrollView
+                
+            } // End of GeometryReader
+            
             
             // MARK: - Game On screen
             
@@ -162,6 +171,9 @@ struct ContentView: View {
         } else {
             
             VStack {
+                
+                Spacer()
+                
                 Text("Game Over")
                     .dynamicTypeSize(.xxLarge)
                     .fontWeight(.black)
@@ -218,6 +230,7 @@ struct ContentView: View {
                 Spacer()
                 
             }
+            
         }
     } // End of body.
     
@@ -306,7 +319,7 @@ struct ContentView: View {
                 } else {
                     tables.insert(number)
                 }
-
+                
             }
             .padding(10)
             .frame(maxWidth: .infinity)
