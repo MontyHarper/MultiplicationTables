@@ -59,17 +59,16 @@ struct ContentView: View {
                 
                 ScrollView {
                     
-                    VStack {
+                    Form {
                         
-                        Spacer()
                         
                         Text("Multiplication Practice")
                             .dynamicTypeSize(.xxxLarge)
                             .fontWeight(.black)
+                            .frame(maxWidth: .infinity)
                         
-                        Spacer()
                         
-                        Group {
+                        Section {
                             
                             Text("Tap a times table to add it to the game...")
                                 .dynamicTypeSize(.xxLarge)
@@ -78,21 +77,21 @@ struct ContentView: View {
                                 HStack(spacing: 0) {
                                     ForEach(0..<7) {number in
                                         NumberButton(number: number, tables: $qanda.tables, showBG: qanda.tables.contains(number))
+                                            .buttonStyle(.plain)
                                     }
                                 }
                                 
                                 HStack(spacing: 0) {
                                     ForEach(7..<13) {number in
                                         NumberButton(number: number, tables: $qanda.tables, showBG: qanda.tables.contains(number))
+                                            .buttonStyle(.plain)
                                     }
                                 }
                                 
                             }
                         }
-                        
-                        Spacer()
-                        
-                        Group {
+                                                
+                        Section {
                             Text("How many questions do you want?")
                                 .dynamicTypeSize(.xxLarge)
                                 .fontWeight(.bold)
@@ -104,8 +103,6 @@ struct ContentView: View {
                             }
                             .pickerStyle(.segmented)
                         }
-                        
-                        Spacer()
                         
                         
                         VStack {
@@ -131,9 +128,8 @@ struct ContentView: View {
                         }
                         .padding(20)
                         
-                        Spacer()
                         
-                    } // End of VStack
+                    } // End of Form
                     .frame(minHeight: geo.size.height)
 
                 } // End of ScrollView
@@ -345,6 +341,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(gameState: .gameOver, newRecordTime: true)
+        ContentView(gameState: .preGame, newRecordTime: true)
     }
 }
