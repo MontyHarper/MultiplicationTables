@@ -32,16 +32,16 @@ struct ContentView: View {
     }
     
     private var tablesFormatted: String {
-        let names = Array(qanda.tables).sorted(by: {$1 < $0}).map({String($0)+"\'s "})
+        let names = Array(qanda.tables).sorted(by: {$1 < $0}).map({String($0)+"\'s"})
         var response = names.count > 1 ? "tables" : "table"
         
         for index in 0..<names.count {
             if index == 0 && names.count > 1 {
-                response = "and " + names[index] + response
+                response = "and " + names[index] + " " + response
             } else if names.count > 1 {
-                response = names[index] + (index >= 1 ? ", " : " ") + response
+                response = names[index] + (index > 0 && names.count > 2 ? ", " : " ") + response
             } else {
-                response = names[index] + response
+                response = names[index] + " " + response
             }
         }
         return response
@@ -112,7 +112,7 @@ struct ContentView: View {
                                 .fontWeight(.black)
                                 .padding(10)
                             
-                            Text("For \(numberOfQuestions) questions from the \(tablesFormatted)...")
+                            Text("For \(numberOfQuestions) questions from the \(tablesFormatted)...\n")
                                 .fontWeight(.bold)
                                 .multilineTextAlignment(.center)
                             
@@ -193,10 +193,11 @@ struct ContentView: View {
                                     .rotationEffect(Angle(degrees: Double(36 * n)), anchor: UnitPoint(x: 0.5, y: 0.6666666))
                             }
                             .offset(x: 0.0, y: ((1/2 - 2/3) * height))
-                            .rotationEffect(Angle(radians: rotate))
+                            .rotationEffect(Angle(degrees: rotate))
                             
                             .onAppear() {
-                                withAnimation(repeatAnimation) {
+                                rotate = 0
+                                withAnimation() {
                                     rotate += 360
                                 }
                             }
@@ -207,6 +208,8 @@ struct ContentView: View {
                             Text("New Fastest Time!\n\(time.oneDecimalString())")
                                 .font(.system(size: 24, weight: .black))
                                 .multilineTextAlignment(.center)
+                                .rotationEffect(Angle(degrees: -rotate))
+
                         }
                         
                     }
